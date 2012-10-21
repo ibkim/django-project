@@ -16,9 +16,7 @@ class LoginForm(forms.Form):
 # Create your views here.
 @login_required
 def index(request):
-    #profile = request.user.get_profile()
-    return HttpResponseRedirect('/dashboard/')
-
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect('/')
+    profile = request.user.get_profile()
+    template = loader.get_template('dashboard/index.html')
+    context = Context( {'id': request.user, 'profile': profile } )
+    return HttpResponse(template.render(context))

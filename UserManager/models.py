@@ -13,7 +13,7 @@ class Organization(models.Model):
         return self.name
 
 class Account(models.Model):
-    user = models.ForeignKey(User)
+    user = models.OneToOneField(User)
     nick = models.CharField(max_length=30)
     mphone = models.CharField(blank=True, null=True, max_length=20)
     ophone = models.CharField(blank=True, null=True, max_length=20)

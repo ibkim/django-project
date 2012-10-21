@@ -105,6 +105,9 @@ ROOT_URLCONF = 'pyproject.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'pyproject.wsgi.application'
 
+LOGIN_URL = '/login/'
+AUTH_PROFILE_MODULE = 'UserManager.Account'
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
@@ -127,6 +130,7 @@ INSTALLED_APPS = (
     'ProjectManager',
     'ProcessManager',
     'Repo',
+    'Dashboard',
 )
 
 # A sample logging configuration. The only tangible logging
