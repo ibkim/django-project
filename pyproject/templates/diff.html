@@ -1,0 +1,92 @@
+
+{% extends "themes/wp-bliss/base.html" %}
+
+{% block title %}
+Diff
+{% endblock %}
+
+{% block style %}
+table.diff
+{
+    border:0px; border-collapse:collapse; width: 100%; font-size:1.1em; font-family: Lucida Console, monospace
+}
+
+td.line { color:#8080a0 }
+th { background: black; color: white }
+/* tr.diffunmodified td { background: #D0D0E0 } */
+tr.diffunmodified td { background: white }
+tr.diffhunk td { background: #A0A0A0 }
+tr.diffadded td { background: #CCFFCC }
+tr.diffdeleted td { background: #FFCCCC }
+tr.diffchanged td { background: #FFFFA0 }
+span.diffchanged2 { background: #E0C880 }
+span.diffponct { color: #B08080 }
+tr.diffmisc td {}
+tr.diffseparator td {}
+
+{% endblock %}
+
+{% block bigtitle %}
+git
+{% endblock %}
+
+{% block content %}
+<h2>
+Diff
+</h2>
+{% autoescape off %}
+
+<p>
+Added Files
+<ul>
+{% for entry in add %}
+<li> {{ entry.diff }} </li>
+{% empty %}
+Empty
+{% endfor %}
+</ul>
+</p>
+
+<p>
+Deleted Files
+<ul>
+{% for entry in del %}
+<li> {{ entry.diff }} </li>
+{% empty %}
+Empty
+{% endfor %}
+</ul>
+</p>
+
+<p>
+Renamed Files
+<ul>
+{% for entry in rename %}
+<li> {{ entry.diff }} </li>
+{% empty %}
+Empty
+{% endfor %}
+</ul>
+</p>
+
+
+<hr/>
+
+<h2> Modified Files </h2>
+{% for entry in modify %}
+
+<blockquote>
+<p>
+{{ entry.diff }}
+</p>
+</blockquote>
+<hr/>
+{% empty %}
+Empty
+{% endfor %}
+
+{% endautoescape %}
+{% endblock %}
+
+
+

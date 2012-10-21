@@ -1,0 +1,96 @@
+
+{% extends "themes/wp-bliss/base.html" %}
+
+{% autoescape off %}
+{% block script %}
+<script type="text/javascript" src="/script/jquery-1.5.2.js"></script>
+
+<script type='text/javascript'>//<![CDATA[ 
+$(window).load(function(){
+// Catch all clicks on a link with the class 'link'
+$('.link').click(function(e) {
+    // Stop the link being followed:
+    e.preventDefault();
+    // Get the div to be shown:
+    var content = $(this).attr('rel');
+    // Remove any active classes:
+    $('.active').removeClass('active');
+    // Add the 'active' class to this link:
+    $(this).addClass('active');
+    // Hide all the content:
+    //$('.hcontent').hide();
+    // Show the requested content:
+    $('#' + content, "").toggle();
+});
+});//]]>  
+
+</script>
+{% endblock %}
+{% endautoescape %}
+
+{% block title %}
+commits
+{% endblock %}
+
+{% block bigtitle %}
+git
+{% endblock %}
+
+{% block content %}
+{% autoescape off %}
+<h2>
+References
+</h2>
+<!--
+<a class="link" href="#" rel="div1">Link 1</a>
+<a class="link" href="#" rel="div2">Link 2</a>
+<a class="link" href="#" rel="div3">Link 3</a>
+
+<div class="hcontent" id="div1">Content 1</div>
+<div class="hcontent" id="div2">Content 2</div>
+<div class="hcontent" id="div3">Content 3</div>
+-->
+<ul>
+{% for entry in refs %}
+    <li> {{ entry.name }} </li>
+{% empty %}
+    <li> No References </li>
+{% endfor %}
+</ul>
+
+<hr/>
+
+
+<h2>
+Commits
+</h2>
+<div align=center>
+<a href="/commit/{{ prev_page }}/">
+Prev
+</a> -- | -- <a href="/commit/{{ next_page }}/">Next</a>
+</div>
+<ul>
+{% for entry in commits %}
+<li> <a href="/diff/{{entry.hexsha}}">{{entry.summary}} ({{ entry.hexsha|truncatechars:10 }}) </a> </li>
+ <ul>
+    <li> {{ entry.author.name }} ({{ entry.author.email }} </li>
+    <li> {{ entry.committed_date|date:"Y/m/d D H:i:s" }} </li>
+ </ul>
+
+<a class="link" href="#" rel="{{entry.hexsha}}">...</a>
+<div class="hcontent" id="{{entry.hexsha}}">
+<div class="message">
+{{ entry.message|linebreaksbr }}
+</div>
+</div>
+{% endfor %}
+</ul>
+<div align=center>
+<a href="/commit/{{ prev_page }}/">Prev</a> -- | -- <a href="/commit/{{ next_page }}/">Next</a>
+</div>
+<hr/>
+{% endautoescape %}
+{% endblock %}
+
+
+
