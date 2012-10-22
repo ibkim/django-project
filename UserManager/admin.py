@@ -10,7 +10,8 @@ class UserProfileInline(admin.StackedInline):
     verbose_name_plural = 'profile'
 
 class AccountAdmin(UserAdmin):
-    inlines = (UserProfileInline,)
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'last_login')
+    inlines = [UserProfileInline,]
 
 admin.site.register(Organization)
 admin.site.unregister(User)

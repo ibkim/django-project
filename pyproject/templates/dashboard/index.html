@@ -16,38 +16,25 @@ Welcome {{ profile.nick }} ({{ id }})
 
 <h3> My Project List </h3>
 
+{% for entry in projects %}
 <ul>
-  <li> Project name </li>
+  <li> {{ entry.name }}({{entry.unix_name}}) </li>
   <ul>
-     <li> description </li>
-     <li> Issues, member, activity .... </li>
+     <li> {{entry.description}} </li>
+     <li> {{entry.wiki}} </li>
+     <ul>
+       {% for profile in entry.members.all %}
+       <li> {{profile.nick}} ( {{ profile.user.username }} ) </li>
+       {% endfor %}
+     </ul>
+     <li> {{entry.repos}} </li>
+     <li> {{entry.status}} </li>
+     <li> {{entry.start_date}} </li>
+     <li> {{entry.end_date}} </li>
+     <li> {{entry.created_date}} </li>
   </ul>
 </ul>
-
-<ul>
-  <li> Project name </li>
-  <ul>
-     <li> description </li>
-     <li> Issues, member, activity .... </li>
-  </ul>
-</ul>
-
-<ul>
-  <li> Project name </li>
-  <ul>
-     <li> description </li>
-     <li> Issues, member, activity .... </li>
-  </ul>
-</ul>
-
-<ul>
-  <li> Project name </li>
-  <ul>
-     <li> description </li>
-     <li> Issues, member, activity .... </li>
-  </ul>
-</ul>
-
+{% endfor %}
 
 {% endblock %}
 

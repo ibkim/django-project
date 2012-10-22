@@ -6,6 +6,7 @@ from django.forms import ModelForm
 from UserManager.models import Account
 from Repo.models import Repo
 from django.contrib.admin import widgets
+from django.contrib.auth.models import User
 
 # Create your models here.
 PROCESS_IN_STEP = (
@@ -24,11 +25,12 @@ class Project(models.Model):
     image_path   = models.CharField(max_length=1000, blank=True, null=True)
     wiki         = models.CharField(max_length=1000, unique=True)
     members      = models.ManyToManyField(Account, blank=True, verbose_name = '프로젝트 멤버')
+    owner        = models.CharField(max_length=100)
     repos        = models.ManyToManyField(Repo, blank=True)
-    start_date   = models.DateField()
-    end_date     = models.DateField()
     status       = models.CharField(max_length=3, choices = PROCESS_IN_STEP,
                                    default='PLA', verbose_name = '프로젝트 단계')
+    start_date   = models.DateField()
+    end_date     = models.DateField()
     created_date = models.DateField()
 
     def __unicode__(self):
@@ -40,6 +42,7 @@ class ProjectForm(ModelForm):
     unix_name   = forms.CharField( widget = forms.TextInput(attrs={'size':40}),
                             help_text = '시스템에서 유일한 unix 이름이어야 합니다. ex) my_my_project-1')
     description = forms.CharField( widget = forms.Textarea(attrs= {'rows': 5, 'cols': 25}))
+    members     = forms.ModelMultipleChoiceField(queryset = Account.objects.all())
 
     start_date  = forms.CharField(widget=forms.TextInput(attrs={'class':'vDateField'}))
     end_date    = forms.CharField(widget=forms.TextInput(attrs={'class':'vDateField'}))

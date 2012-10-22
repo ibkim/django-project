@@ -9,14 +9,27 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django import forms
 
-class LoginForm(forms.Form):
-    username = forms.CharField(max_length=100)
-    password = forms.CharField(max_length=10)
+# Models import
+from UserManager.models import Account
+from ProjectManager.models import Project
+from django.contrib.auth.models import User
 
 # Create your views here.
 @login_required
 def index(request):
     profile = request.user.get_profile()
     template = loader.get_template('dashboard/index.html')
-    context = Context( {'id': request.user, 'profile': profile } )
+
+    # User 의 profile nick 으로 reverse select를 하는데 동명이인이 있다면?
+    # 가능하다면 User.username 으로 selecting 을 할 수 있는 방법으로 할 것.
+    user = Account.objects.get(nick__exact = profile.nick)
+    projects = user.project_set.all()
+    #projects = user.project_set.exclude(owner__exact = request.user)
+    #own_projects = Project.objects.filter(owner__exact = request.user).select_related()
+    
+    #account = projects[0].members.all()
+    #print account.all()[0].user.username
+
+    #users = projects[0].members.all().select_related()
+    context = Context( {'id': request.user, 'profile': profile, 'projects': projects, } )
     return HttpResponse(template.render(context))

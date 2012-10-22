@@ -24,8 +24,10 @@ def index(request):
             new_project = f.save(commit=False)
             new_project.created_date = datetime.datetime.now()
             new_project.wiki = '/project/wiki/' + new_project.unix_name
+            new_project.owner = request.user
             new_project.save()
             f.save_m2m()
+            return HttpResponseRedirect('/dashboard/')
     else:
         f = ProjectForm()
 
