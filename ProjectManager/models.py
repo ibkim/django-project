@@ -42,7 +42,7 @@ class ProjectForm(ModelForm):
     unix_name   = forms.CharField( widget = forms.TextInput(attrs={'size':40}),
                             help_text = '시스템에서 유일한 unix 이름이어야 합니다. ex) my_my_project-1')
     description = forms.CharField( widget = forms.Textarea(attrs= {'rows': 5, 'cols': 25}))
-    members     = forms.ModelMultipleChoiceField(queryset = Account.objects.all())
+    #members     = forms.ModelMultipleChoiceField(queryset = Account.objects.all())
 
     start_date  = forms.CharField(widget=forms.TextInput(attrs={'class':'vDateField'}))
     end_date    = forms.CharField(widget=forms.TextInput(attrs={'class':'vDateField'}))
