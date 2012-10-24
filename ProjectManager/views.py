@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response
 from django.template import Context, loader
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django import forms
 from models import Project, ProjectForm
 from UserManager.models import Account
@@ -27,13 +28,12 @@ def index(request):
             new_project.created_date = datetime.datetime.now()
             new_project.wiki = '/project/wiki/' + new_project.unix_name
             new_project.owner = request.user
-            account = Account.objects.get(nick = profile.nick)
+            user = User.objects.get(username = request.user)
 
             # save 한 뒤 manytomany field를 add 해야 한다.
             # db에 저장된 뒤 primary key 가 존재해야만 m2m field를 따로 저장 가능
             new_project.save()
-            new_project.members.add(account)
-            new_project.save()
+            new_project.members.add(user)
             f.save_m2m()
             return HttpResponseRedirect('/dashboard/')
     else:

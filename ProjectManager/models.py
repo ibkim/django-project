@@ -10,12 +10,12 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 PROCESS_IN_STEP = (
-    ('PLA', '프로젝트계획/재계획'),
-    ('ANA', '분석'),
-    ('DES', '설계'),
-    ('DEV', '구현'),
-    ('TES', '시험'),
-    ('DON', '완료'),
+    (u'PLA', u'프로젝트계획/재계획'),
+    (u'ANA', u'분석'),
+    (u'DES', u'설계'),
+    (u'DEV', u'구현'),
+    (u'TES', u'시험'),
+    (u'DON', u'완료'),
 )
 
 class Project(models.Model):
@@ -24,11 +24,11 @@ class Project(models.Model):
     description  = models.CharField(blank=True, null=True, max_length=1000)
     image_path   = models.CharField(max_length=1000, blank=True, null=True)
     wiki         = models.CharField(max_length=1000, unique=True)
-    members      = models.ManyToManyField(Account, blank=True, verbose_name = '프로젝트 멤버')
+    members      = models.ManyToManyField(User, blank=True, verbose_name = u'프로젝트 멤버')
     owner        = models.CharField(max_length=100)
     repos        = models.ManyToManyField(Repo, blank=True)
     status       = models.CharField(max_length=3, choices = PROCESS_IN_STEP,
-                                   default='PLA', verbose_name = '프로젝트 단계')
+                                   default=u'PLA')
     start_date   = models.DateField()
     end_date     = models.DateField()
     created_date = models.DateField()
@@ -38,19 +38,19 @@ class Project(models.Model):
 
 class ProjectForm(ModelForm):
     name        = forms.CharField( widget = forms.TextInput(attrs={'size':40}),
-                            help_text = '원하는 이름으로 프로젝트 명을 작성하세요.' )
+                            help_text = u'원하는 이름으로 프로젝트 명을 작성하세요.' )
     unix_name   = forms.CharField( widget = forms.TextInput(attrs={'size':40}),
-                            help_text = '시스템에서 유일한 unix 이름이어야 합니다. ex) my_my_project-1')
+                            help_text = u'시스템에서 유일한 unix 이름이어야 합니다. ex) my_my_project-1')
     description = forms.CharField( widget = forms.Textarea(attrs= {'rows': 5, 'cols': 25}))
     #members     = forms.ModelMultipleChoiceField(queryset = Account.objects.all())
 
     start_date  = forms.CharField(widget=forms.TextInput(attrs={'class':'vDateField'}))
     end_date    = forms.CharField(widget=forms.TextInput(attrs={'class':'vDateField'}))
 
-    name.label        = '프로젝트이름'
-    description.label = '설명'
-    start_date.label  = '시작일'
-    end_date.label    = '종료일'
+    name.label        = u'프로젝트이름'
+    description.label = u'설명'
+    start_date.label  = u'시작일'
+    end_date.label    = u'종료일'
 
     class Meta:
         model = Project
