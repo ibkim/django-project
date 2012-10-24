@@ -21,7 +21,7 @@ def index(request):
     template = loader.get_template('dashboard/index.html')
 
     user = User.objects.get(username__exact = request.user.username)
-    projects = user.project_set.all().select_related()
+    projects = user.project_set.all().order_by('-id')
 
     context = Context( {'id': request.user, 'profile': profile, 'projects': projects, } )
     return HttpResponse(template.render(context))

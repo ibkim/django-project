@@ -25,7 +25,7 @@ class Project(models.Model):
     image_path   = models.CharField(max_length=1000, blank=True, null=True)
     wiki         = models.CharField(max_length=1000, unique=True)
     members      = models.ManyToManyField(User, blank=True, null=True, verbose_name = u'프로젝트 멤버')
-    owner        = models.OneToOneField(User, related_name = 'owner')
+    owner        = models.ForeignKey(User, related_name = 'owner')
     repos        = models.ManyToManyField(Repo, blank=True)
     status       = models.CharField(max_length=3, choices = PROCESS_IN_STEP,
                                    default=u'PLA')

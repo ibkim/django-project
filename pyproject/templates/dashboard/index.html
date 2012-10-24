@@ -10,13 +10,44 @@ Dashboard
 {% endblock %}
 
 {% block content %}
+<style type="text/css">
+#table-5 {
+width: 700px;
+background-color: #f5f5f5;
+padding: 5px;
+border-radius: 5px;
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+border: 1px solid #ebebeb;
+}
+#table-5 td, #table-5 th {
+padding: 1px 5px;
+}
+#table-5 thead {
+font: normal 15px Helvetica Neue,Helvetica,sans-serif;
+text-shadow: 0 1px 0 white;
+color: #999;
+}
+#table-5 th {
+text-align: left;
+border-bottom: 1px solid #fff;
+}
+#table-5 td {
+font-size: 14px;
+}
+#table-5 td:hover {
+background-color: #fff;
+}
+</style>
+
 <h2>
 Welcome {{ profile.nick }} ({{ id }})
 </h2>
 
 <h3> My Project List </h3>
 
-{% for entry in projects %}
+{% for project in projects %}
+<!-- 
 <ul>
   <li> {{ entry.name }}({{entry.unix_name}}) </li>
   <ul>
@@ -34,6 +65,19 @@ Welcome {{ profile.nick }} ({{ id }})
      <li> {{entry.created_date}} </li>
   </ul>
 </ul>
+-->
+<p>
+<table id="table-5">
+<thead>
+<th> {{ project.name }} {% ifequal project.owner id %} (owned) {% endifequal %} </th>
+</thead>
+<tbody>
+<tr>
+<td>{{ project.description }}</td>
+</tr>
+</tbody>
+</table>
+</p>
 {% endfor %}
 
 {% endblock %}
