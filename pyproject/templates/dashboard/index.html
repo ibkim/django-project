@@ -23,8 +23,8 @@ Welcome {{ profile.nick }} ({{ id }})
      <li> {{entry.description}} </li>
      <li> {{entry.wiki}} </li>
      <ul>
-       {% for profile in entry.members.all %}
-       <li> {{profile.nick}} ( {{ profile.user.username }} ) </li>
+       {% for user in entry.members.all %}
+       <li> {{user.get_profile.nick}} ( {{ user.username }} ) </li>
        {% endfor %}
      </ul>
      <li> {{entry.repos}} </li>
