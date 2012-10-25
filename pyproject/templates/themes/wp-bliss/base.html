@@ -63,7 +63,7 @@ body {
     	<ul>
 
       		<li id="selected"><a href="/dashboard/">Dashboard</a></li>
-
+{% block topmenu %}
       		<li><a href="/projects/">Explore</a></li>
 
      		<li><a href="/wiki/{{id}}/">Wiki</a></li>
@@ -75,7 +75,7 @@ body {
       		<li><a href="#">About</a></li>
 
 		<li><a href="/register/">Registration</a></li>
-
+{% endblock %}
    	 	</ul>
 
   		</div>
@@ -88,6 +88,11 @@ body {
 
 <div id="sidebar">
 
+{% block sidetop %}
+{% endblock %}
+
+{% block sidebar %}
+<!--
     <h1>Projects</h1>
 
       	<ul class="sidemenu">
@@ -129,9 +134,9 @@ body {
     <h1>About Author</h1>
 
       		<p>I'm Santhosh. S. I love web-designing and learning xHTML and CSS. Visit my <a href="http:/santhosh.themebin.com/blog">blog</a> for more info. And visit template homepage.</p>
-
+-->
+{% endblock %}
 </div>
-
   	<div id="content">
 {% block content %}
 

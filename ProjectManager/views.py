@@ -46,3 +46,11 @@ def index(request):
 
     return HttpResponse(template.render(context))
 
+def detail(request, id):
+
+    project = Project.objects.get(id = id)
+
+    template = loader.get_template('project/detail.html')
+    context = Context( {'project': project } )
+
+    return HttpResponse(template.render(context))

@@ -24,10 +24,15 @@ def index(request):
     user = User.objects.get(username__exact = request.user.username)
     projects = user.project_set.all().order_by('-id')
 
+    owner_cnt = Project.objects.filter(owner__exact = user).count()
+    member_cnt = projects.count()
+
     if str(profile.avatar.name) is "":
         pic = ""
     else:
         pic = settings.MEDIA_URL+str(profile.avatar.name)
 
-    context = Context( {'id': request.user, 'profile': profile, 'avatar': pic, 'projects': projects, } )
+    sidetop = { 'pic': pic, 'owner': owner_cnt, 'member': member_cnt, }
+
+    context = Context( {'id': request.user, 'profile': profile, 'sidetop': sidetop, 'projects': projects, } )
     return HttpResponse(template.render(context))

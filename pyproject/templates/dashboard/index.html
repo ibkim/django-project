@@ -9,6 +9,20 @@ Dashboard
 
 {% endblock %}
 
+{% block sidetop %}
+<h1>
+{% if sidetop.pic %}
+<img src="{{sidetop.pic}}" alt="avatar"/>
+{% endif %}
+{{ profile.nick }} ({{ id }})
+</h2>
+<ul>
+  <li> 생성한 프로젝트: {{sidetop.owner}}</li>
+  <li> 멤버인 프로젝트: {{sidetop.member}}</li>
+</ul>
+{% endblock %}
+
+
 {% block content %}
 <style type="text/css">
 #table-5 {
@@ -40,40 +54,42 @@ background-color: #fff;
 }
 </style>
 
-<h2>
-Welcome 
-{% if avatar %}
-<img src="{{avatar}}" alt="avatar"/>
-{% endif %}
-{{ profile.nick }} ({{ id }})
-</h2>
+<style type="text/css">
+.styled-button-2 {
+-webkit-box-shadow:rgba(0,0,0,0.2) 0 1px 0 0;
+-moz-box-shadow:rgba(0,0,0,0.2) 0 1px 0 0;
+box-shadow:rgba(0,0,0,0.2) 0 1px 0 0;
+border-bottom-color:#333;
+border:1px solid #61c4ea;
+background-color:#7cceee;
+border-radius:5px;
+-moz-border-radius:5px;
+-webkit-border-radius:5px;
+color:#333;
+font-family:'Verdana',Arial,sans-serif;
+font-size:14px;
+text-shadow:#b2e2f5 0 1px 0;
+padding:5px
+}
+</style>
 
-<h3> My Project List </h3>
+<h3> Projects 
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+<a href="/project/new/">
+<input type="submit" class="styled-button-2" value="New Project" />
+</a> 
+</h3>
 
 {% for project in projects %}
-<!-- 
-<ul>
-  <li> {{ entry.name }}({{entry.unix_name}}) </li>
-  <ul>
-     <li> {{entry.description}} </li>
-     <li> {{entry.wiki}} </li>
-     <ul>
-       {% for user in entry.members.all %}
-       <li> {{user.get_profile.nick}} ( {{ user.username }} ) </li>
-       {% endfor %}
-     </ul>
-     <li> {{entry.repos}} </li>
-     <li> {{entry.status}} </li>
-     <li> {{entry.start_date}} </li>
-     <li> {{entry.end_date}} </li>
-     <li> {{entry.created_date}} </li>
-  </ul>
-</ul>
--->
 <p>
 <table id="table-5">
 <thead>
-<th> {{ project.name }} {% ifequal project.owner id %} (owned) {% endifequal %} </th>
+<th> 
+
+<a href="/project/{{project.id}}/">{{ project.name }}</a> {% ifequal project.owner id %} (owner) {% endifequal %} 
+:
+저장소 {{ project.repos.count }} 개, 프로젝트 단계 {{ project.status }}
+</th>
 </thead>
 <tbody>
 <tr>

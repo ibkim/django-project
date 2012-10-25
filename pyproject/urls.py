@@ -27,5 +27,8 @@ urlpatterns = patterns('',
     url(r'^login/', 'django.contrib.auth.views.login'),
     url(r'^logout/', 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html',}),
     url(r'^dashboard/$', 'Dashboard.views.index'),
+
+    url(r'^project/(?P<id>\d+)/$', 'ProjectManager.views.detail'),
+    url(r'^repo/(?P<id>\d+)/$', 'Repo.views.test'),
     url(r'^project/new/$', 'ProjectManager.views.index'),
 )

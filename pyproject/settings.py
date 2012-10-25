@@ -55,6 +55,10 @@ MEDIA_ROOT = SITE_ROOT+'/media/'
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = 'http://127.0.0.1:8000/media/'
 
+# git repository
+GITOLITE_ADMIN = '/opt/gitolite-admin/'
+GIT_REPO_ROOT = '/opt/git/repositories/'
+
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
@@ -70,6 +74,8 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    '/opt/gitolite-admin/',
+    '/opt/git/repositories/',
 )
 
 # List of finder classes that know how to find static files in
