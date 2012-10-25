@@ -31,7 +31,7 @@ class Project(models.Model):
                                    default=u'PLA')
     start_date   = models.DateField()
     end_date     = models.DateField()
-    created_date = models.DateField()
+    created_date = models.DateField(auto_now_add = True)
 
     def __unicode__(self):
         return u'%s' % self.name

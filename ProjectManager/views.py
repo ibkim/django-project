@@ -2,7 +2,6 @@
 
 import os
 import sys
-import datetime
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import Context, loader
@@ -20,21 +19,24 @@ from django.views.decorators.csrf import csrf_exempt
 @login_required
 def index(request):
     profile = request.user.get_profile()
-    
+
     if request.method == 'POST':
         f = ProjectForm(request.POST)
         if f.is_valid():
             new_project = f.save(commit=False)
-            new_project.created_date = datetime.datetime.now()
             new_project.wiki = '/project/wiki/' + new_project.unix_name
-            
+
             user = User.objects.get(username__exact = request.user.username)
             new_project.owner = user
 
             new_project.save()
             user.project_set.add(new_project)
             f.save_m2m()
-            
+
+            profile = user.get_profile()
+            profile.projects.add(new_project)
+            profile.save()
+
             return HttpResponseRedirect('/dashboard/')
     else:
         f = ProjectForm()

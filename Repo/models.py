@@ -10,6 +10,7 @@ class Repo(models.Model):
     repo_path = models.CharField(blank=True, unique=True, max_length=255)
     description = models.CharField(blank=True, max_length=1000)
     creator = models.ForeignKey('UserManager.Account')
+    created_date = models.DateField(auto_now_add = True)
 
     def __unicode__(self):
         return u'%s' % (self.name,)

@@ -1,0 +1,31 @@
+
+{% extends "themes/wp-bliss/base.html" %}
+
+{% block title %}
+Registration
+{% endblock %}
+
+{% block bigtitle %}
+Register
+{% endblock %}
+
+{% block content %}
+{% if form.errors %}
+<p>Something wrong. Please try again.</p>
+{% endif %}
+
+<form enctype="multipart/form-data" method="post" action="">
+<table>
+{% for field in form %}
+<tr><th>{{ field.label_tag }}</th>
+<td><font color="red">{{ field.errors }}</font>{{ field }} {{ field.help_text }}</td></tr>
+{% endfor %}
+</table>
+<input type="submit" value="Register" />
+</form>
+
+{% endblock %}
+
+
+
+
