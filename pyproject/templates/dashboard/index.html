@@ -41,7 +41,11 @@ background-color: #fff;
 </style>
 
 <h2>
-Welcome {{ profile.nick }} ({{ id }})
+Welcome 
+{% if avatar %}
+<img src="{{avatar}}" alt="avatar"/>
+{% endif %}
+{{ profile.nick }} ({{ id }})
 </h2>
 
 <h3> My Project List </h3>

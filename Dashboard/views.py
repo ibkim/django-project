@@ -8,6 +8,7 @@ from django.template import Context, loader
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django import forms
+from pyproject import settings
 
 # Models import
 from UserManager.models import Account
@@ -23,5 +24,10 @@ def index(request):
     user = User.objects.get(username__exact = request.user.username)
     projects = user.project_set.all().order_by('-id')
 
-    context = Context( {'id': request.user, 'profile': profile, 'projects': projects, } )
+    if str(profile.avatar.name) is "":
+        pic = ""
+    else:
+        pic = settings.MEDIA_URL+str(profile.avatar.name)
+
+    context = Context( {'id': request.user, 'profile': profile, 'avatar': pic, 'projects': projects, } )
     return HttpResponse(template.render(context))
