@@ -1,27 +1,34 @@
 import os, glob, tempfile, shutil
 
 
+USER_INDEX = 0
+REPO_INDEX = 1
+PERM_INDEX = 2
+USRGRP_INDEX = 3
+
 class Gitolite(object):
-  
   def __init__(self, path='./gitolite-admin'):
     self._repo_path = path
     self._user_repo_config = path + "/conf/user_repos.conf"
     self._key_path = path + "/keydir/"
 
 
-  def addRepo(self, username, reponame):
+  def createRepo(self, username, projectname, reponame):
     """
-    Adds a new repo to gitolite.
+    Create a new repo to gitolite.
     returns true iff successfully added repo to config
     """
 
     repo_data = self.__load_repo()
 
-    repo = username + '/' + reponame
-    if repo in repo_data:
+    if projectname in repo_data:
       return False
 
-    repo_data[repo] = [( 'RW+', username )]
+    project_data = 
+
+    project_data[USER_INDEX]
+
+    repo_data[projectname] = [( 'RW+', username )]
 
     self.__save_repo(repo_data)
 
@@ -37,7 +44,7 @@ class Gitolite(object):
     repo_data = self.__load_repo()
 
     repo = username + '/' + reponame
-    
+
     if repo not in repo_data:
       return False
 
@@ -111,8 +118,10 @@ class Gitolite(object):
 
     repo_data = {}
 
-    #repo [username]/[reponame]
-    # RW+ = [username]
+    #@someprj_members = ...
+    #@someprj_repos = ...
+    #repo @somprj_repos
+    # RW+ = @someprj_members
 
     repo_file_content = open(self._user_repo_config, 'r')
 
@@ -121,13 +130,24 @@ class Gitolite(object):
 
     while line != '':
 
-      if line.startswith('repo'):
+      if line.startswith('@'):
+        line_split = line.split('=', 1)
+        if len(line_split) != 2:
+          raise SyntaxError('Invalid Group def.')
+        if line_split[0].split('_',1)[1].strip() == 'members':
+          members = line_split[1].split()
+        else:
+          repos = line_split[1].split()
+
+      elif line.startswith('repo'):
         line_split = line.split(None, 1)
         if len(line_split) != 2:
           raise SyntaxError('Invalid repository def.')
-        repo = line_split[1].strip()
+        #extract myprj project name from @myprj_repos
+        project = line_split[1].split('_')[0][1:]
+
       elif line.startswith(' '):
-        if repo == '':
+        if project == '':
           raise SyntaxError('Missing repo def.')
 
         line_split = line.split('=', 1)
@@ -135,12 +155,12 @@ class Gitolite(object):
           raise SyntaxError('Invalid rule')
 
         perm = line_split[0].strip()
-        user = line_split[1].strip()
+        usergroup = line_split[1].strip()
 
-        if repo not in repo_data:
-          repo_data[repo] = []
+        if project not in repo_data:
+          repo_data[project] = []
 
-        repo_data[repo].append( ( perm, user) )
+        repo_data[project].append( ( members, repos, perm, usergroup) )
       else:
         raise SyntaxError('Invalid line')
 
@@ -166,5 +186,17 @@ class Gitolite(object):
     tmp_file.flush()
     shutil.copyfile(tmp_file.name, self._user_repo_config)
     tmp_file.close()
+
+
+if __name__ == "__main__":
+  repo  = Gitolite('/opt/gitolite-admin')
+  data = repo.getRepos()
+
+  users = data['myprj'][0][0]
+  repos = data['myprj'][0][1]
+  perm = data['myprj'][0][2]
+  user_group = data['myprj'][0][3]
+
+
 
 
