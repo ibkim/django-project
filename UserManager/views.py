@@ -42,8 +42,6 @@ def register(request):
             image.thumbnail((160,160), PImage.ANTIALIAS)
             image.save(image_path, "PNG")
 
-            print request.FILES['avatar']
-
             login_user = authenticate(username = user.username,
                                       password = form.cleaned_data['pass1'])
             if login_user is not None:

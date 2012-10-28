@@ -26,10 +26,8 @@ def index(request, id, path=''):
 
     key_data = repo_conf.getSSHKeys()
     if request.user.username not in key_data:
-        print key_data
         repo_user_flag = False
     else:
-        print key_data
         repo_user_flag = True
 
     repo_path = settings.GIT_REPO_ROOT + '/' + object.repo_path + '.git'
@@ -42,7 +40,6 @@ def index(request, id, path=''):
         return HttpResponse(tpl.render(ctx))
 
     # 최초 생성 후 접근일 경우, 참조할 refs 가 없다.
-    print repo.heads
     if 'master' not in repo.heads:
         tpl = loader.get_template('tree.html')
         ctx = Context( { 'HEAD': None, 'is_user': repo_user_flag, 'project': project, 'repo': object, 'dirs': None, 'files': None, } )
@@ -78,9 +75,6 @@ def index(request, id, path=''):
                 link_paths['link'] = link
                 path_param.append(copy.copy(link_paths))
                 count = count + 1
-                
-
-    print path_param
 
     # TODO: this has error, why?
     #blob = repo.heads.homework.commit.tree.blobs[0]
