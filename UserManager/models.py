@@ -33,3 +33,8 @@ class AccountForm(forms.Form):
     nick = forms.CharField(label = u'사용자 실명', required = True, initial = u'홍길동',  max_length=50)
     org = forms.ModelChoiceField(label = u'부서', queryset = Organization.objects.all(), empty_label="-------------", required = True)
 
+class AddKeyForm(forms.Form):
+    name = forms.CharField(label = u'Key 이름', required = True, max_length=50)
+    key = forms.CharField(label = u'Key 값',
+                          widget = forms.Textarea(attrs= {'rows': 0, 'cols': 0}),
+                          required = True, max_length=500)

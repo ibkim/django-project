@@ -4,7 +4,7 @@ from django.db import models
 from django import forms
 from django.forms import ModelForm
 from UserManager.models import Account
-from Repo.models import Repo
+from Repository.models import Repository
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User
 
@@ -26,7 +26,7 @@ class Project(models.Model):
     wiki         = models.CharField(max_length=1000, unique=True)
     members      = models.ManyToManyField(User, blank=True, null=True, verbose_name = u'프로젝트 멤버')
     owner        = models.ForeignKey(User, related_name = 'owner')
-    repos        = models.ManyToManyField(Repo, blank=True)
+    repos        = models.ManyToManyField(Repository, blank=True, related_name='project-repo')
     status       = models.CharField(max_length=3, choices = PROCESS_IN_STEP,
                                    default=u'PLA')
     start_date   = models.DateField()

@@ -2,9 +2,8 @@
 {% extends "themes/wp-bliss/base.html" %}
 
 {% block title %}
-Project Detail View
+Create New Repository
 {% endblock %}
-
 
 {% block content %}
 
@@ -26,25 +25,10 @@ text-shadow:#b2e2f5 0 1px 0;
 padding:5px
 }
 </style>
+<form action="" method="POST">
+{{ form.as_table }}
+<input type="submit" value="Create">
 
-<h1> 프로젝트명: {{ project.name }} <a href="/repository/new/{{project.id}}">
-<input type="submit" class="styled-button-2" value="New Repository" />
-</a> </h1>
-
-members
-<ul>
-{% for user in project.members.all %}
-<li> <a href="/user/{{user.id}}">{{ user.get_profile.nick }}</a> </li>
-{% endfor %}
-</ul>
-
-Repository
-<ul>
-{% for repo in project.repos.all %}
-  <li> <a href="/repository/{{repo.id}}/">{{repo.reponame}}</a>: {{repo.repo_path}}</li>
-{% endfor %}
-</ul>
 {% endblock %}
-
 
 

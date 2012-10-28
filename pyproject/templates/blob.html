@@ -11,12 +11,12 @@ Tree View
 
 {% block content %}
 <h2>
-<a href="/tree/">{{ project}}</a>
+<a href="/repository/{{repoid}}/">{{reponame}}</a>
 {% if path %}
 >
 {% for entry in path %}
 {% if forloop.revcounter0 %}
-<a href="/tree/{{entry.link}}">
+<a href="/repository/{{repoid}}/{{entry.link}}">
 {% endif %}
 {{entry.basename}}
 {% if forloop.revcounter0 %}

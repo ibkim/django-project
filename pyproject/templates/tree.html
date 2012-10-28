@@ -10,14 +10,39 @@ Tree View
 {% endblock %}
 
 {% block content %}
+<style type="text/css">
+<!--
+@import url("/css/table.css");
+-->
+</style>
 <h2>
-<a href="/tree/">{{ project}}</a>
+<a href="/project/{{project.id}}/">{{ project.name }}</a> >
+{{ repo.reponame }}
+
+<p>
+<div align="left">
+저장소를 받으실려면 아래 경로를 이용하세요.<br>
+<code>git clone git@medici.lginnotek.com:{{repo.repo_path}} [somedirectoryname]</code>
+</div>
+</p>
+{% if HEAD == None %}
+<p> 이 저장소는 생성된 후, 아직 첫 번째 커밋이 없습니다. 비어 있는 저장소로는 할 수 있는 일이 없습니다. 내려 받은 다음 뭔가를 해보세요. </p>
+{% endif %}
+{% if is_user == False %}
+이런 아직 당신은 저장소를 마음껏 이용할 수 있는 key 조차 등록하지 않았네요!<br>
+ssh key 를 생성해서 public key 를 여러분의 계정에 등록해야 합니다. 그래야만 저장소를 내려받고 push 할 수 있어요. setting 메뉴로 들어가서 여러분의 ssh public key를 등록하세요.<br>
+아. 물론 프로젝트의 멤버로 등록되어 있는 경우에만 push 를 할 수 있어요. <br>
+프로젝트 멤버가 아니라면  read only 로만 저장소를 내려받을 수 있어요.
+{% endif %}
 
 {% if path %}
+<a href="/repository/{{repo.id}}/">
+{{repo.reponame}}
+</a>
 >
 {% for entry in path %}
 {% if forloop.revcounter0 %}
-<a href="/tree/{{entry.link}}">
+<a href="/repository/{{repoid}}/{{entry.link}}">
 {% endif %}
 {{entry.basename}}
 {% if forloop.revcounter0 %}
@@ -33,15 +58,36 @@ Tree View
 
 </h2>
 
-<ul>
+<table id="one-column-emphasis" width="800">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
 {% for entry in dirs %}
-<li><a href=/tree/{{ entry.link }}>{{ entry.path }}/</a></li>
+<tr>
+<td><img src="/media/softicons/folder.png" width="16" height="16">
+<a href=/repository/{{repoid}}/{{ entry.link }}>{{ entry.path }}/</a>
+</td>
+<td> {{entry.summary}} </td>
+<td> {{entry.summary}} </td>
+</tr>
 {% endfor %}
 
 {% for entry in files %}
-<li> <a href="/blob/{{entry.link}}">{{ entry.path }}</a></li>
+<tr>
+<td><img src="/media/softicons/file1.png" width="16" height="16">
+<a href="/repository/blob/{{repoid}}/{{entry.link}}">{{ entry.path }}</a>
+</td>
+<td> ago </td>
+<td> {{entry.summary}} </td>
+</tr>
 {% endfor %}
-</ul>
+</tbody>
+</table>
 
 {% endblock %}
 

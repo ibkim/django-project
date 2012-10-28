@@ -12,6 +12,7 @@ from django import forms
 from models import Project, ProjectForm
 from UserManager.models import Account
 from django.views.decorators.csrf import csrf_exempt
+from Repository.gitolite import Gitolite
 
 @csrf_exempt
 

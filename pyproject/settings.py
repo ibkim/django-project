@@ -56,8 +56,8 @@ MEDIA_ROOT = SITE_ROOT+'/media/'
 MEDIA_URL = 'http://127.0.0.1:8000/media/'
 
 # git repository
-GITOLITE_ADMIN = '/opt/gitolite-admin/'
-GIT_REPO_ROOT = '/opt/git/repositories/'
+GITOLITE_ADMIN = '/opt/gitolite-admin'
+GIT_REPO_ROOT = '/opt/git/repositories'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -135,7 +135,7 @@ INSTALLED_APPS = (
     'UserManager',
     'ProjectManager',
     'ProcessManager',
-    'Repo',
+    'Repository',
     'Dashboard',
 )
 

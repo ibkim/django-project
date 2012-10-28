@@ -1,0 +1,18 @@
+
+{% extends "themes/wp-bliss/base.html" %}
+
+{% block title %}
+SSH Key Setting
+{% endblock %}
+
+{% block content %}
+<h2>
+SSH Key
+</h2>
+
+<form action="" method="POST">
+{{form.as_table}}
+<input type="submit" value="Add Key">
+</form>
+{% endblock %}
+

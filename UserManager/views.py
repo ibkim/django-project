@@ -14,10 +14,12 @@ from django.contrib.auth import authenticate, login
 from django import forms
 from django.contrib.auth.models import User
 from ProjectManager.models import Project, ProjectForm
-from UserManager.models import Organization, Account, AccountForm
+from UserManager.models import Organization, Account, AccountForm, AddKeyForm
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password
 from pyproject import settings
+from Repository.gitolite import Gitolite
+
 @csrf_exempt
 
 def register(request):
@@ -70,6 +72,50 @@ def register(request):
 def index(request):
     #profile = request.user.get_profile()
     return HttpResponseRedirect('/dashboard/')
+
+def setting(request):
+    template = loader.get_template('account/setting.html')
+    context = Context( {'form': None, } )
+
+    return HttpResponse(template.render(context))
+
+def sshkey(request):
+    conf = Gitolite(settings.GITOLITE_ADMIN)
+    keys = conf.getSSHKeys()
+
+    try:
+        mykeys = keys[request.user.username]
+    except KeyError:
+        mykeys = []
+    
+    template = loader.get_template('account/sshkey.html')
+    context = Context( {'sshkey': mykeys, } )
+
+    return HttpResponse(template.render(context))
+
+@csrf_exempt
+def addsshkey(request):
+    if request.method == 'POST':
+        form = AddKeyForm(request.POST)
+        if form.is_valid():
+            conf = Gitolite(settings.GITOLITE_ADMIN)
+            key_value = form.cleaned_data['key']
+            key_name = form.cleaned_data['name'].encode('utf-8')
+
+            conf.addSSHKey(request.user.username, key_name, key_value)
+            if conf.publish() == False:
+                template = loader.get_template('error.html')
+                context = Context( {'error': u'Cannot Publish your SSH key', } )
+                return HttpResponse(template.render(context))
+
+            HttpResponseRedirect('/account/setting/sshkey/')
+    else:
+        form = AddKeyForm()
+
+    template = loader.get_template('account/addsshkey.html')
+    context = Context( {'form': form, } )
+
+    return HttpResponse(template.render(context))
 
 def logout_view(request):
     logout(request)
