@@ -11,8 +11,9 @@ from django.contrib.auth.models import User
 from django import forms
 from models import Project, ProjectForm
 from UserManager.models import Account
+from pyproject import settings
 from django.views.decorators.csrf import csrf_exempt
-from Repository.gitolite import Gitolite
+#from Repository.gitolite import Gitolite
 
 @csrf_exempt
 
@@ -48,10 +49,11 @@ def index(request):
     return HttpResponse(template.render(context))
 
 def detail(request, id):
-
     project = Project.objects.get(id = id)
 
+    media_root = settings.MEDIA_URL
+
     template = loader.get_template('project/detail.html')
-    context = Context( {'project': project } )
+    context = Context( {'project': project, 'media': media_root } )
 
     return HttpResponse(template.render(context))
