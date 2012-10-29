@@ -7,11 +7,16 @@ SSH Key Setting
 
 {% block content %}
 <h2>
-SSH Key
+Add SSH Key
 </h2>
 
 <form action="" method="POST">
-{{form.as_table}}
+<table>
+{% for field in form %}
+<tr><th>{{ field.label_tag }}</th>
+<td><font color="red">{{ field.errors }}</font>{{ field }} {{ field.help_text }}</td></tr>
+{% endfor %}
+</table>
 <input type="submit" value="Add Key">
 </form>
 {% endblock %}

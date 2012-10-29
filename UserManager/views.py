@@ -19,6 +19,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password
 from pyproject import settings
 from Repository.gitolite import Gitolite
+import copy
 
 @csrf_exempt
 
@@ -77,6 +78,12 @@ def setting(request):
 
     return HttpResponse(template.render(context))
 
+def sshKeyFingerprint(line):
+    import base64,hashlib
+    key = base64.b64decode(line.strip().partition('ssh-rsa ')[2].split(' ')[0])
+    fp_plain = hashlib.md5(key).hexdigest()
+    return ':'.join(a+b for a,b in zip(fp_plain[::2], fp_plain[1::2]))
+
 def sshkey(request):
     conf = Gitolite(settings.GITOLITE_ADMIN)
     keys = conf.getSSHKeys()
@@ -85,11 +92,52 @@ def sshkey(request):
         mykeys = keys[request.user.username]
     except KeyError:
         mykeys = []
-    
+
+    mykeys.sort()
+
+    key_data = {}
+    data = []
+    for name in mykeys:
+        key_data['name'] = name
+        key = conf.getSSHKeyValue(request.user.username, name)
+        key_data['fingerprint'] = sshKeyFingerprint(key)
+        data.append(copy.copy(key_data))
+
     template = loader.get_template('account/sshkey.html')
-    context = Context( {'sshkey': mykeys, } )
+    context = Context( {'sshkey': data, } )
 
     return HttpResponse(template.render(context))
+
+def is_duplicate(username, fingerprint):
+    conf = Gitolite(settings.GITOLITE_ADMIN)
+    keys = conf.getSSHKeys()
+
+    try:
+        mykeys = keys[username]
+    except KeyError:
+        mykeys = []
+
+    key_data = {}
+    data = []
+    for name in mykeys:
+        key = conf.getSSHKeyValue(username, name)
+        if sshKeyFingerprint(key) == fingerprint:
+            return True
+
+    return False
+
+def validate_sshkey(key):
+    import base64,hashlib
+    import struct
+
+    try:
+        type, key_string, comment = key.split()
+        data = base64.decodestring(key_string)
+    except:
+        return False
+    int_len = 4
+    str_len = struct.unpack('>I', data[:int_len])[0] # this should return 7
+    return data[int_len:int_len+str_len] == type
 
 @csrf_exempt
 def addsshkey(request):
@@ -100,13 +148,22 @@ def addsshkey(request):
             key_value = form.cleaned_data['key']
             key_name = form.cleaned_data['name'].encode('utf-8')
 
-            conf.addSSHKey(request.user.username, key_name, key_value)
-            if conf.publish() == False:
-                template = loader.get_template('error.html')
-                context = Context( {'error': u'Cannot Publish your SSH key', } )
-                return HttpResponse(template.render(context))
+            if validate_sshkey(key_value) == True:
+                fingerprint = sshKeyFingerprint(key_value)
+                if is_duplicate(request.user.username, fingerprint) == True:
+                    form.errors['key'] = u'중복된 SSH Key 값입니다.'
+                    template = loader.get_template('account/addsshkey.html')
+                    context = Context( {'form': form, } )
+                    return HttpResponse(template.render(context))
 
-            HttpResponseRedirect('/account/setting/sshkey/')
+                conf.addSSHKey(request.user.username, key_name, key_value)
+                if conf.publish() == False:
+                    template = loader.get_template('error.html')
+                    context = Context( {'error': u'Cannot Publish your SSH key', } )
+                    return HttpResponse(template.render(context))
+                return HttpResponseRedirect('/account/setting/sshkey/')
+            else:
+                form.errors['key'] = u'잘못된 SSH Key 값입니다.'
     else:
         form = AddKeyForm()
 
@@ -114,6 +171,18 @@ def addsshkey(request):
     context = Context( {'form': form, } )
 
     return HttpResponse(template.render(context))
+
+def delsshkey(request, name):
+    conf = Gitolite(settings.GITOLITE_ADMIN)
+
+    if conf.rmSSHKey(request.user.username, name) == False:
+        template = loader.get_template('error.html')
+        context = Context( {'error': u'SSH Key file 을 지우는데 실패 했습니다.', } )
+        return HttpResponse(template.render(context))
+
+    conf.publish()
+
+    return HttpResponseRedirect('/account/setting/sshkey/')
 
 def logout_view(request):
     logout(request)

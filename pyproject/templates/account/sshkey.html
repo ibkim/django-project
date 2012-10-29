@@ -26,12 +26,12 @@ SSH Key
 <tbody>
 <tr>
 
-{% for key in sshkey %}
+{% for entry in sshkey %}
 <td>
-{{key}}
+{{entry.name}} ({{entry.fingerprint}})
 </td>
 <td>
-<a href="/account/setting/sshkey/delete/{{key}}/">
+<a href="/account/setting/sshkey/delete/{{entry.name}}/">
 <input type="submit" class="styled-button-6" value="Delete" /> 
 </a>
 </td>

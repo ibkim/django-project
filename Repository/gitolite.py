@@ -206,6 +206,13 @@ class Gitolite(object):
 
     return True
 
+  def getSSHKeyValue(self, username, keyname):
+    file_path = self.__get_ssh_key_path(username, keyname)
+    f = open(file_path, 'r')
+    key = f.read()
+    f.close()
+    return key
+
   def getSSHKeys(self):
 
     keys = glob.glob(self._key_path + '*@*.pub')
@@ -258,41 +265,6 @@ class Gitolite(object):
       #o.push()
       git.execute(['git', 'commit', '-m', message,])
       git.execute(['git', 'push', 'origin', 'master'])
-    except:
-      return False
-
-    self.modified_files = []
-    self.deleted_files = []
-
-    return True
-
-  def publish_old(self):
-    if self.is_dirty == False:
-      return True
-
-    repo = Repo(self._repo_path, odbt=GitCmdObjectDB)
-    repo.config_writer()
-    index = repo.index
-
-    message = 'Commit by django application\n\n'
-
-    message = message + 'Modified:\n    '
-    if len(self.modified_files) > 0:
-      index.add(self.modified_files)
-      for item in self.modified_files:
-        message = message + item + '\n    '
-
-    message = message.rstrip(' ')
-    message = message + 'Deleted:\n    '
-    if len(self.deleted_files) > 0:
-      index.remove(self.deleted_files)
-      for item in self.deleted_files:
-        message = message + item + '\n    '
-
-    try:
-      commit = index.commit(message)
-      o = repo.remotes.origin
-      o.push()
     except:
       return False
 
