@@ -34,7 +34,8 @@ class AccountForm(forms.Form):
     org = forms.ModelChoiceField(label = u'부서', queryset = Organization.objects.all(), empty_label="-------------", required = True)
 
 class AddKeyForm(forms.Form):
-    name = forms.CharField(label = u'Key 이름', required = True, max_length=50)
+    name = forms.CharField(label = u'Key 이름', required = True, max_length=50,
+                           help_text = u'영문 혹은 숫자로 이뤄진 공백없는 문자. ex) home1, office, office1')
     key = forms.CharField(label = u'Key 값',
                           widget = forms.Textarea(attrs= {'rows': 0, 'cols': 0}),
                           required = True, max_length=500)
