@@ -38,10 +38,11 @@ def register(request):
             profile.org.add(form.cleaned_data['org'])
             user.save()
 
-            image_path = pjoin(settings.MEDIA_ROOT, str(profile.avatar))
-            image = PImage.open(image_path)
-            image.thumbnail((160,160), PImage.ANTIALIAS)
-            image.save(image_path, "PNG")
+            if profile.avatar:
+                image_path = pjoin(settings.MEDIA_ROOT, str(profile.avatar))
+                image = PImage.open(image_path)
+                image.thumbnail((160,160), PImage.ANTIALIAS)
+                image.save(image_path, "PNG")
 
             login_user = authenticate(username = user.username,
                                       password = form.cleaned_data['pass1'])
