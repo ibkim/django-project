@@ -36,13 +36,13 @@ def index(request, id, path=''):
         repo = Repo(repo_path, odbt=GitCmdObjectDB)
     except NoSuchPathError:
         tpl = loader.get_template('error.html')
-        ctx = Context( { 'error': u"OOps! Repository path is invalid", } )
+        ctx = Context( { 'error': u"OOps! Repository path %s is invalid" % repo_path, } )
         return HttpResponse(tpl.render(ctx))
 
     # 최초 생성 후 접근일 경우, 참조할 refs 가 없다.
     if 'master' not in repo.heads:
         tpl = loader.get_template('tree.html')
-        ctx = Context( { 'HEAD': None, 'is_user': repo_user_flag, 'project': project, 'repo': object, 'dirs': None, 'files': None, } )
+        ctx = Context( { 'hostname': request.META['HTTP_HOST'].split(':')[0], 'HEAD': None, 'is_user': repo_user_flag, 'project': project, 'repo': object, 'dirs': None, 'files': None, } )
         return HttpResponse(tpl.render(ctx))
     try:
         tree = repo.heads.master.commit.tree[path.rstrip('/')]
@@ -81,7 +81,7 @@ def index(request, id, path=''):
     #ff = blob.data_stream()
     
     tpl = loader.get_template('tree.html')
-    ctx = Context( { 'HEAD': repo.head, 'is_user': repo_user_flag, 'project': project, 'repo': object, 'path': path_param, 'repoid': id, 'repo': object, 'dirs': trees, 'files': files, } )
+    ctx = Context( { 'hostname': request.META['HTTP_HOST'].split(':')[0], 'HEAD': repo.head, 'is_user': repo_user_flag, 'project': project, 'repo': object, 'path': path_param, 'repoid': id, 'repo': object, 'dirs': trees, 'files': files, } )
 
     return HttpResponse(tpl.render(ctx))
 

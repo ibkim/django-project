@@ -36,6 +36,8 @@ def create(request, id):
             repo_count = project.repos.all().count()
             repo_path = project.unix_name + '/' + str(repo_count+1)
             conf = Gitolite(settings.GITOLITE_ADMIN)
+
+            conf.lock()
             conf.createRepo([request.user.username,] , project.unix_name)
             conf.addRepo(project.unix_name, [repo_path,])
 
@@ -44,6 +46,7 @@ def create(request, id):
                 conf.addUser(project.unix_name, [user.username,])
 
             result = conf.publish()
+            conf.unlock()
             if result == False:
                 #cleanup all
                 conf.rmProject(project.unix_name)
@@ -65,18 +68,47 @@ def create(request, id):
 
     return HttpResponse(template.render(context))
 
+def delrepo(request, projectid, repoid):
+    project = Project.objects.get(id = projectid)
+    repo = Repository.objects.get(id = repoid)
+
+    if repo not in project.repos.all():
+        template = loader.get_template('error.html')
+        context = Context( {'error': repo.reponame + u'은 이미 프로젝트 저장소가 아닙니다. 이상하네요. 이 에러는 발생할 수 없는 에러입니다.' ,} )
+        return HttpResponse(template.render(context))
+
+    conf = Gitolite(settings.GITOLITE_ADMIN)
+    conf.lock()
+
+    if conf.rmRepo(project.unix_name, [repo.repo_path,]):
+        if conf.publish() == False:
+            template = loader.get_template('error.html')
+            context = Context( {'error': repo.reponame + u'을 석제할 수 없습니다.' ,} )
+            conf.unlock()
+            return HttpResponse(template.render(context))
+
+    conf.unlock()
+
+    project.repos.remove(repo)
+    project.save()
+    Repository.delete(repo)
+
+    return HttpResponseRedirect('/project/'+projectid+'/')
+
 def test(request, id):
     repo = Repo(settings.GITOLITE_ADMIN, odbt=GitCmdObjectDB)
     repo.config_writer()
     index = repo.index
-    
+
     conf = Gitolite(settings.GITOLITE_ADMIN)
+    conf.lock()
     conf.createRepo(['ibkim2',] , 'django-prj')
 
     index.add( ['conf/user_repos.conf',] )
     commit = index.commit('add user by django')
     o = repo.remotes.origin
     o.push()
+    conf.unlock()
 
     template = loader.get_template('project/repo.html')
     context = Context( {'repo': id } )

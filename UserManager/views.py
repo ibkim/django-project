@@ -22,7 +22,6 @@ from Repository.gitolite import Gitolite
 import copy
 
 @csrf_exempt
-
 def register(request):
     if request.method == 'POST':
         form = AccountForm(request.POST, request.FILES)
@@ -146,6 +145,7 @@ def addsshkey(request):
         form = AddKeyForm(request.POST)
         if form.is_valid():
             conf = Gitolite(settings.GITOLITE_ADMIN)
+            conf.lock()
             key_value = form.cleaned_data['key']
             key_name = form.cleaned_data['name'].encode('utf-8')
 
@@ -161,7 +161,9 @@ def addsshkey(request):
                 if conf.publish() == False:
                     template = loader.get_template('error.html')
                     context = Context( {'error': u'Cannot Publish your SSH key', } )
+                    conf.unlock()
                     return HttpResponse(template.render(context))
+                conf.unlock()
                 return HttpResponseRedirect('/account/setting/sshkey/')
             else:
                 form.errors['key'] = u'잘못된 SSH Key 값입니다.'
@@ -176,12 +178,14 @@ def addsshkey(request):
 def delsshkey(request, name):
     conf = Gitolite(settings.GITOLITE_ADMIN)
 
+    conf.lock()
     if conf.rmSSHKey(request.user.username, name) == False:
         template = loader.get_template('error.html')
         context = Context( {'error': u'SSH Key file 을 지우는데 실패 했습니다.', } )
         return HttpResponse(template.render(context))
 
     conf.publish()
+    conf.unlock()
 
     return HttpResponseRedirect('/account/setting/sshkey/')
 

@@ -1,5 +1,6 @@
 import os, glob, tempfile, shutil
 from git import *
+import lockfile
 
 USER_INDEX = 0
 REPO_INDEX = 1
@@ -7,7 +8,7 @@ PERM_INDEX = 2
 USRGRP_INDEX = 3
 
 class Gitolite(object):
-  is_dirty = False
+
   modified_files = []
   deleted_files = []
   
@@ -16,7 +17,22 @@ class Gitolite(object):
     self._repo_path = path
     self._user_repo_config = path + "/conf/user_repos.conf"
     self._key_path = path + "/keydir/"
+    self._lock_file = path + "/lock"
+    self._lock = lockfile.FileLock(self._lock_file)
+    self._is_dirty = False
 
+  def lock(self, timeout=60):
+    while not self._lock.i_am_locking():
+      try:
+        self._lock.acquire(timeout)
+      except lockfile.LockTimeout:
+        self._lock.break_lock()
+        self._lock.acquire()
+        return False
+    return True
+
+  def unlock(self):
+    self._lock.release()
 
   def createRepo(self, users, projectname):
     """
@@ -35,7 +51,7 @@ class Gitolite(object):
 
     if self._user_repo_config not in self.modified_files:
       self.modified_files.append(self._user_repo_config)
-      self.is_dirty = True
+    self._is_dirty = True
 
     return True
 
@@ -57,7 +73,7 @@ class Gitolite(object):
 
     if self._user_repo_config not in self.modified_files:
       self.modified_files.append(self._user_repo_config)
-      self.is_dirty = True
+    self._is_dirty = True
 
     return True
 
@@ -82,9 +98,28 @@ class Gitolite(object):
 
     if self._user_repo_config not in self.modified_files:
       self.modified_files.append(self._user_repo_config)
-      self.is_dirty = True
+    self._is_dirty = True
 
     return True
+
+  def isThereUser(self, projectname, user):
+    """
+    Removes a repo
+    returns true iff successfully removed repo from config.
+    """
+
+    repo_data = self.__load_repo()
+
+    if projectname  not in repo_data:
+      return False
+
+    project = repo_data[projectname]
+    members = project[0][USER_INDEX]
+
+    if user in members:
+      return True
+
+    return False
 
   def rmUser(self, projectname, users):
     """
@@ -107,7 +142,7 @@ class Gitolite(object):
 
     if self._user_repo_config not in self.modified_files:
       self.modified_files.append(self._user_repo_config)
-      self.is_dirty = True
+    self._is_dirty = True
 
     return True
 
@@ -132,7 +167,7 @@ class Gitolite(object):
 
     if self._user_repo_config not in self.modified_files:
       self.modified_files.append(self._user_repo_config)
-      self.is_dirty = True
+    self._is_dirty = True
 
     return True
 
@@ -144,8 +179,9 @@ class Gitolite(object):
 
     repo_data = self.__load_repo()
 
-    if projectname  not in repo_data:
-      return False
+    #if projectname not in repo_data.keys():
+    #  print repo_data
+    #  return False
 
     project = repo_data[projectname]
     repository = project[0][REPO_INDEX]
@@ -157,7 +193,7 @@ class Gitolite(object):
 
     if self._user_repo_config not in self.modified_files:
       self.modified_files.append(self._user_repo_config)
-      self.is_dirty = True
+    self._is_dirty = True
 
     return True
 
@@ -184,7 +220,7 @@ class Gitolite(object):
       # handle for remove and then create
       if key_file_name in self.deleted_files:
         self.deleted_files.remove(key_file_name)
-      self.is_dirty = True
+      self._is_dirty = True
 
     return True
 
@@ -202,7 +238,7 @@ class Gitolite(object):
       # handle for add and then remov
       if key_file_name in self.modified_files:
         self.modified_files.remove(key_file_name)
-      self.is_dirty = True
+      self._is_dirty = True
 
     return True
 
@@ -237,7 +273,7 @@ class Gitolite(object):
     return key_data
 
   def publish(self):
-    if self.is_dirty == False:
+    if self._is_dirty == False:
       return True
 
     repo = Repo(self._repo_path, odbt=GitCmdObjectDB)
@@ -270,6 +306,8 @@ class Gitolite(object):
 
     self.modified_files = []
     self.deleted_files = []
+
+    self._is_dirty = False
 
     return True
 

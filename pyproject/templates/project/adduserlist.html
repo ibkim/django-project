@@ -1,0 +1,47 @@
+
+{% extends "themes/wp-bliss/base.html" %}
+
+{% block title %}
+Project Detail View
+{% endblock %}
+
+{% block content %}
+
+<h1> <a href="/project/{{project.id}}/"> {{project.name }}</a> > 프로젝트 멤버 추가</h1>
+
+<p>
+<table id="table-5">
+  <thead>
+    <th>
+      <font size="5">{{ project.name }}</font>
+    </th>
+    </thead>
+  <tbody>
+{% for user in users %}
+{% if user not in members %}
+    <tr>
+      <td>
+
+{% if user.get_profile.avatar %}
+<img src="{{media}}/{{user.get_profile.avatar}}">
+{% else %}
+<img src="{{media}}softicons/user.png">
+{% endif %}
+<a href="/user/{{user.id}}">{{ user.get_profile.nick }}</a>
+{{ user.username }}
+
+	<a href="/project/adduser/{{project.id}}/{{user.id}}/">
+	<img src="{{media}}/softicons/plus.png" align="right">
+      </a>
+
+      </td>
+      </tr>
+{% endif %}
+{% endfor %}
+    <tbody>
+</table>
+</p>
+
+{% endblock %}
+
+

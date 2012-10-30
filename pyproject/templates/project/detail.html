@@ -16,30 +16,41 @@ Project Detail View
   <thead>
     <th>
       <font size="5">Members</font>
-    </th>
-    <th width="10">
     <a href="/project/adduser/{{project.id}}/">
-	<!--<input type="submit" class="styled-button-2" value="Add Member" />-->
-	<img src="{{media}}/softicons/plus.png">
+	<img src="{{media}}/softicons/plus.png" align="right">
       </a>
     </th>
     </thead>
   <tbody>
+
+{% for user in users %}
     <tr>
       <td>
-{% for user in project.members.all %}
-{% if user.get_profile.avatar %}
-<img src="{{media}}/{{user.get_profile.avatar}}">
+{% if user.avatar %}
+<img src="{{media}}/{{user.avatar}}">
 {% else %}
 <img src="{{media}}softicons/user.png">
 {% endif %}
-<a href="/user/{{user.id}}">{{ user.get_profile.nick }}</a>
-      </td>
-      <td>
+<a href="/user/{{user.id}}">{{ user.nick }}</a>
+
+
+{% if project.repos.count %}
+{% ifnotequal project.owner.id user.id %}
+{% if user.pushable == False %}
+<a href="/project/adduser/repository/{{project.id}}/{{user.id}}/">저장소에 push 권한 추가.</a>
+{% else %}
+<a href="/project/deluser/repository/{{project.id}}/{{user.id}}/">push 권한 뺏기.</a>
+{% endif %}
+{% endifnotequal %}
+{% endif %}
+
+{% ifequal project.owner.id user.id %}
+<img src="{{media}}/softicons/ok.png" width="20" height="20" align="right">
+{% else %}
 	<a href="/project/deluser/{{project.id}}/{{user.id}}/">
-	<!--<input type="submit" class="styled-button-6" value="Remove" />-->
-	<img src="{{media}}/softicons/less.png" width="20" height="20">
+	<img src="{{media}}/softicons/less.png" width="20" height="20" align="right">
       </a>
+{% endifequal %}
       </td>
       </tr>
 {% endfor %}
@@ -54,24 +65,18 @@ Project Detail View
       <font size="5">
       Repository
       </font>
-    </th>
-    <th width="10">
       <a href="/repository/new/{{project.id}}">
-	<!--<input type="submit" class="styled-button-2" value="New Repository" />-->
-	<img src="{{media}}/softicons/plus.png">
+	<img src="{{media}}/softicons/plus.png" align="right">
       </a> 
     </th>
     </thead>
   <tbody>
+{% for repo in project.repos.all %}
     <tr>
       <td>
-{% for repo in project.repos.all %}
 <a href="/repository/{{repo.id}}/">{{repo.reponame}}</a>
-      </td>
-      <td>
-	<a href="/repository/del/{{repo.id}}/">
-	<!--<input type="submit" class="styled-button-6" value="Remove" />-->
-	<img src="{{media}}/softicons/less.png" width="20" height="20">
+	<a href="/repository/del/{{project.id}}/{{repo.id}}/">
+	<img src="{{media}}/softicons/less.png" width="20" height="20" align="right">
       </a>
       </td>
     </tr>

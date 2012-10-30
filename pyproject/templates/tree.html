@@ -17,12 +17,12 @@ Tree View
 </style>
 <h2>
 <a href="/project/{{project.id}}/">{{ project.name }}</a> >
-{{ repo.reponame }}
+{{ repo.reponame }} 저장소
 
 <p>
 <div align="left">
 저장소를 받으실려면 아래 경로를 이용하세요.<br>
-<code>git clone git@medici.lginnotek.com:{{repo.repo_path}} [somedirectoryname]</code>
+<code>git clone git@{{hostname}}:{{repo.repo_path}} [somedirectoryname]</code>
 </div>
 </p>
 {% if HEAD == None %}
