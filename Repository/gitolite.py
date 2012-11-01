@@ -321,6 +321,7 @@ class Gitolite(object):
 
     repo_data = {}
     project = ''
+    members = []
 
     #@someprj_members = ...
     #@someprj_repos = ...

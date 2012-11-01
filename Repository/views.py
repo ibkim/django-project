@@ -38,7 +38,6 @@ def create(request, id):
             conf = Gitolite(settings.GITOLITE_ADMIN)
 
             conf.lock()
-            conf.createRepo([request.user.username,] , project.unix_name)
             conf.addRepo(project.unix_name, [repo_path,])
 
             members = project.members.all()

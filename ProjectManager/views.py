@@ -39,6 +39,16 @@ def index(request):
             profile = user.get_profile()
             profile.projects.add(new_project)
             profile.save()
+            
+            conf = Gitolite(settings.GITOLITE_ADMIN)
+            conf.lock()
+            conf.createRepo([request.user.username,] , new_project.unix_name)
+            result = conf.publish()
+            conf.unlock()
+            if result == False:
+                template = loader.get_template('error.html')
+                context = Context( {'error': u'프로젝트의 저장소를 초기화하는데 실패했습니다.' ,} )
+                return HttpResponse(template.render(context))
 
             return HttpResponseRedirect('/dashboard/')
     else:
