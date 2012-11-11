@@ -2,6 +2,8 @@ from django.conf.urls import patterns, include, url
 import os
 
 import ProjectManager, ProcessManager, UserManager
+from wiki.urls import get_pattern as get_wiki_pattern
+from django_notify.urls import get_pattern as get_notify_pattern
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -44,4 +46,6 @@ urlpatterns = patterns('',
     url(r'^repository/new/(?P<id>\d+)/$', 'Repository.views.create'),
     url(r'^repository/del/(?P<projectid>\d+)/(?P<repoid>\d+)/$', 'Repository.views.delrepo'),
     url(r'^project/new/$', 'ProjectManager.views.index'),
+    url(r'^wiki/notify/', get_notify_pattern()),
+    url(r'wiki/', get_wiki_pattern())
 )
